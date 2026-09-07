@@ -26,8 +26,15 @@ logging.basicConfig(
 )
 logger = logging.getLogger("sala-do-futuro")
 
-DISCORD_TOKEN = os.getenv("DISCORD_TOKEN")
-COMMAND_PREFIX = os.getenv("COMMAND_PREFIX", "!")
+DISCORD_TOKEN = os.environ.get("DISCORD_TOKEN") or os.getenv("DISCORD_TOKEN")
+COMMAND_PREFIX = os.environ.get("COMMAND_PREFIX") or os.getenv("COMMAND_PREFIX", "!")
+
+if DISCORD_TOKEN:
+    logger.info("DISCORD_TOKEN encontrado. Prosseguindo com a inicialização do bot.")
+else:
+    logger.warning(
+        "DISCORD_TOKEN não encontrado em os.environ nem via dotenv (.env)."
+    )
 
 # ---------------------------------------------------------------------- #
 # Instâncias principais
