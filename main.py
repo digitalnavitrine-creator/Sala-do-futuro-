@@ -18,7 +18,17 @@ from sala_do_futuro import SalaDoFuturo
 # ---------------------------------------------------------------------- #
 # Configuração de ambiente e logging
 # ---------------------------------------------------------------------- #
-load_dotenv()
+# `load_dotenv()` só tem efeito quando existe um arquivo `.env` no diretório
+# atual, o que é útil para desenvolvimento local. Em produção (ex.: Railway),
+# as variáveis de ambiente já são injetadas diretamente pelo provedor, então
+# a ausência de um `.env` não deve impedir o bot de iniciar.
+try:
+    load_dotenv()
+except Exception:
+    # Não é crítico se o carregamento do .env falhar (ex.: arquivo ausente
+    # ou sem permissão de leitura). As variáveis de ambiente do sistema
+    # continuam disponíveis normalmente via os.getenv().
+    pass
 
 logging.basicConfig(
     level=logging.INFO,
@@ -26,8 +36,11 @@ logging.basicConfig(
 )
 logger = logging.getLogger("sala-do-futuro")
 
-DISCORD_TOKEN = os.getenv("DISCORD_TOKEN")
-COMMAND_PREFIX = os.getenv("COMMAND_PREFIX", "!")
+# Lê diretamente do ambiente do processo. Isso funciona tanto para variáveis
+# carregadas de um `.env` local quanto para variáveis injetadas pela
+# plataforma de deploy (Railway, Docker, etc.).
+DISCORD_TOKEN = os.environ.get("DISCORD_TOKEN")
+COMMAND_PREFIX = os.environ.get("COMMAND_PREFIX", "!")
 
 # ---------------------------------------------------------------------- #
 # Instâncias principais
